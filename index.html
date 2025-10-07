@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лавка для Кампуса</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🍕 Лавка для Кампуса</h1>
+        <p>Закажи всё необходимое прямо в общежитие</p>
+    </div>
+
+    <div id="errorMessage" class="error"></div>
+    <div id="successMessage" class="success"></div>
+
+    <div class="order-form">
+        <h2>Создать заказ</h2>
+        <form id="orderForm">
+            <div class="form-group">
+                <label>Что заказать?</label>
+                <input type="text" name="items" placeholder="Пицца, кофе, канцелярия..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Куда доставить?</label>
+                <input type="text" name="address" placeholder="Общежитие №1, комната 205" required>
+            </div>
+
+            <button type="submit">🚀 Заказать</button>
+        </form>
+    </div>
+
+    <div>
+        <h2>Активные заказы</h2>
+        <div id="ordersContainer">
+            <div class="loading">Загружаем заказы...</div>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

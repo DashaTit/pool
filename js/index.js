@@ -27,11 +27,8 @@ function showSuccess(text) {
 // 📥 Загрузить заказы
 async function loadOrders() {
     try {
-        const response = await apiRequest('/api/orders', { method: 'GET' });
-        if (!response.ok) {
-            showError('Ошибка загрузки');
-        }
-        return await response.json();
+        const response = await apiRequest('/api/orders', { method: 'GET' }); // получение заказов
+        console.log(response.json());
     } catch (error) {
         console.error('Ошибка:', error);
         throw error;
@@ -45,10 +42,6 @@ async function createOrder(orderData) {
             method: 'POST',
             body: JSON.stringify(orderData)
         });
-
-        if (!response.ok) {
-            showError('Ошибка создания заказа');
-        }
 
         return await response.json();
     } catch (error) {
@@ -78,26 +71,18 @@ async function refreshOrders() {
         orders = await loadOrders();
         renderOrders(orders);
     } catch (error) {
-        showError('Не удалось загрузить заказы');
         ordersContainer.innerHTML = '<div class="loading">Ошибка загрузки</div>';
     }
 }
 
 // 📝 Обработчик формы
 orderForm.addEventListener('submit', async function(event) {
-    event.preventDefault();
 
     const formData = new FormData(this);
     const orderData = {
         items: formData.get('items').trim(),
         address: formData.get('address').trim()
     };
-
-    // Проверка полей
-    if (!orderData.items || !orderData.address) {
-        showError('Заполните все поля');
-        return;
-    }
 
     // Блокируем кнопку
     const button = this.querySelector('button');
@@ -108,18 +93,13 @@ orderForm.addEventListener('submit', async function(event) {
     try {
         // Создаем заказ
         const newOrder = await createOrder(orderData);
-
-        // Показываем успех
-        showSuccess(`Заказ #${newOrder.id} создан!`);
-
         // Очищаем форму
         this.reset();
-
         // Обновляем список
         await refreshOrders();
 
     } catch (error) {
-        showError('Не удалось создать заказ');
+        console.log('Не удалось создать заказ');
     } finally {
         // Разблокируем кнопку
         button.textContent = originalText;

@@ -27,10 +27,14 @@ function showSuccess(text) {
 // 📥 Загрузить заказы
 async function loadOrders() {
     try {
-        const response = await apiRequest('/api/orders', { method: 'GET' }); // получение заказов
-        console.log(response.json());
+        const response = await apiRequest('/api/orders', { method: 'GET' });
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Ошибка:', error);
+        console.error('Ошибка загрузки заказов:', error);
         throw error;
     }
 }
@@ -42,6 +46,10 @@ async function createOrder(orderData) {
             method: 'POST',
             body: JSON.stringify(orderData)
         });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка создания заказа: ${response.status}`);
+        }
 
         return await response.json();
     } catch (error) {
@@ -71,12 +79,14 @@ async function refreshOrders() {
         orders = await loadOrders();
         renderOrders(orders);
     } catch (error) {
-        ordersContainer.innerHTML = '<div class="loading">Ошибка загрузки</div>';
+        ordersContainer.innerHTML = '<div class="loading">Ошибка загрузки заказов</div>';
+        showError('Не удалось загрузить заказы. Попробуйте позже.');
     }
 }
 
 // 📝 Обработчик формы
 orderForm.addEventListener('submit', async function(event) {
+    event.preventDefault(); 
 
     const formData = new FormData(this);
     const orderData = {
@@ -97,9 +107,10 @@ orderForm.addEventListener('submit', async function(event) {
         this.reset();
         // Обновляем список
         await refreshOrders();
-
+        showSuccess('Заказ успешно создан!');
     } catch (error) {
-        console.log('Не удалось создать заказ');
+        console.error('Ошибка при создании заказа:', error);
+        showError('Не удалось создать заказ. Проверьте данные и попробуйте снова.');
     } finally {
         // Разблокируем кнопку
         button.textContent = originalText;
